@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { MetodePembayaranModal } from "@/components/transaksi/MetodePembayaranModal";
 import {
   Badge,
   statusPembayaranVariant,
@@ -21,7 +22,20 @@ import {
   statusTransaksiLabels,
   tipeLabels,
 } from "@/lib/utils/labels";
-import type { StatusTransaksi, TransaksiWithRelations } from "@/types/database";
+import type {
+  MetodePembayaran,
+  StatusPembayaran,
+  StatusTransaksi,
+  TransaksiWithRelations,
+} from "@/types/database";
+
+interface PendingLunas {
+  id: string;
+  nomor_nota: string;
+}
+
+const selectClass =
+  "w-full min-w-[120px] rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:disabled:bg-zinc-800 dark:focus:border-zinc-500 dark:focus:ring-zinc-800";
 
 export default function TransaksiPage() {
   const supabase = createClient();
@@ -29,6 +43,7 @@ export default function TransaksiPage() {
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
+  const [pendingLunas, setPendingLunas] = useState<PendingLunas | null>(null);
 
   const loadTransaksi = useCallback(async () => {
     setLoading(true);
@@ -71,25 +86,74 @@ export default function TransaksiPage() {
     setUpdatingId(null);
   }
 
-  async function togglePembayaran(
-    id: string,
-    current: string,
-    metode: string | null
-  ) {
+  async function setBelumBayar(id: string) {
     setUpdatingId(id);
-    const newStatus = current === "lunas" ? "belum_bayar" : "lunas";
     await supabase
       .from("transaksi")
       .update({
-        status_pembayaran: newStatus,
-        metode_pembayaran: newStatus === "lunas" ? metode || "cash" : null,
+        status_pembayaran: "belum_bayar",
+        metode_pembayaran: null,
       })
       .eq("id", id);
     await loadTransaksi();
     setUpdatingId(null);
   }
 
+  async function setLunas(id: string, metode: MetodePembayaran) {
+    setUpdatingId(id);
+    await supabase
+      .from("transaksi")
+      .update({
+        status_pembayaran: "lunas",
+        metode_pembayaran: metode,
+      })
+      .eq("id", id);
+    await loadTransaksi();
+    setUpdatingId(null);
+  }
+
+  async function updateMetode(id: string, metode: MetodePembayaran) {
+    setUpdatingId(id);
+    await supabase
+      .from("transaksi")
+      .update({
+        status_pembayaran: "lunas",
+        metode_pembayaran: metode,
+      })
+      .eq("id", id);
+    await loadTransaksi();
+    setUpdatingId(null);
+  }
+
+  function handleStatusPembayaranChange(
+    item: TransaksiWithRelations,
+    newStatus: StatusPembayaran
+  ) {
+    if (newStatus === item.status_pembayaran) return;
+
+    if (newStatus === "belum_bayar") {
+      setBelumBayar(item.id);
+      return;
+    }
+
+    setPendingLunas({ id: item.id, nomor_nota: item.nomor_nota });
+  }
+
+  async function handleConfirmMetode(metode: MetodePembayaran) {
+    if (!pendingLunas) return;
+    await setLunas(pendingLunas.id, metode);
+    setPendingLunas(null);
+  }
+
   const statusOptions = Object.entries(statusTransaksiLabels).map(
+    ([value, label]) => ({ value, label })
+  );
+
+  const pembayaranOptions = Object.entries(statusPembayaranLabels).map(
+    ([value, label]) => ({ value, label })
+  );
+
+  const metodeOptions = Object.entries(metodePembayaranLabels).map(
     ([value, label]) => ({ value, label })
   );
 
@@ -126,25 +190,25 @@ export default function TransaksiPage() {
                 <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
                   Nota
                 </th>
-                <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
+                <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
                   Pelanggan
                 </th>
-                <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
+                <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
                   Paket
                 </th>
-                <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
+                <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
                   Berat
                 </th>
-                <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
+                <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
                   Total
                 </th>
-                <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
+                <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
                   Status
                 </th>
-                <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
-                  Bayar
+                <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
+                  Pembayaran
                 </th>
-                <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
+                <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
                   Ubah Status
                 </th>
               </tr>
@@ -207,27 +271,71 @@ export default function TransaksiPage() {
                       </Badge>
                     </td>
                     <td className="px-4 py-3">
-                      <button
-                        onClick={() =>
-                          togglePembayaran(
-                            item.id,
-                            item.status_pembayaran,
-                            item.metode_pembayaran
-                          )
-                        }
-                        disabled={updatingId === item.id}
-                        className="cursor-pointer"
-                      >
-                        <Badge
-                          variant={statusPembayaranVariant(
-                            item.status_pembayaran
-                          )}
+                      <div className="flex min-w-[140px] flex-col gap-1.5">
+                        <select
+                          value={item.status_pembayaran}
+                          disabled={updatingId === item.id}
+                          onChange={(e) =>
+                            handleStatusPembayaranChange(
+                              item,
+                              e.target.value as StatusPembayaran
+                            )
+                          }
+                          className={selectClass}
                         >
-                          {statusPembayaranLabels[item.status_pembayaran]}
-                          {item.metode_pembayaran &&
-                            ` (${metodePembayaranLabels[item.metode_pembayaran]})`}
-                        </Badge>
-                      </button>
+                          {pembayaranOptions.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+
+                        {item.status_pembayaran === "lunas" ? (
+                          <select
+                            value={item.metode_pembayaran ?? ""}
+                            disabled={updatingId === item.id}
+                            onChange={(e) => {
+                              if (!e.target.value) return;
+                              updateMetode(
+                                item.id,
+                                e.target.value as MetodePembayaran
+                              );
+                            }}
+                            className={selectClass}
+                          >
+                            {!item.metode_pembayaran && (
+                              <option value="" disabled>
+                                Pilih metode...
+                              </option>
+                            )}
+                            {metodeOptions.map((opt) => (
+                              <option key={opt.value} value={opt.value}>
+                                {opt.label}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <span className="px-1 text-xs text-slate-400 dark:text-zinc-500">
+                            Metode: —
+                          </span>
+                        )}
+
+                        {item.status_pembayaran === "lunas" &&
+                          item.metode_pembayaran && (
+                            <Badge
+                              variant={statusPembayaranVariant("lunas")}
+                              className="w-fit"
+                            >
+                              Lunas (
+                              {
+                                metodePembayaranLabels[
+                                  item.metode_pembayaran
+                                ]
+                              }
+                              )
+                            </Badge>
+                          )}
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       <select
@@ -239,9 +347,7 @@ export default function TransaksiPage() {
                             e.target.value as StatusTransaksi
                           )
                         }
-                        className={cn(
-                          "min-w-[130px] rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-500 dark:focus:ring-zinc-800"
-                        )}
+                        className={cn(selectClass, "min-w-[130px]")}
                       >
                         {statusOptions.map((opt) => (
                           <option key={opt.value} value={opt.value}>
@@ -257,6 +363,14 @@ export default function TransaksiPage() {
           </table>
         </div>
       </Card>
+
+      <MetodePembayaranModal
+        open={!!pendingLunas}
+        nomorNota={pendingLunas?.nomor_nota}
+        onClose={() => setPendingLunas(null)}
+        onConfirm={handleConfirmMetode}
+        loading={!!updatingId}
+      />
     </div>
   );
 }

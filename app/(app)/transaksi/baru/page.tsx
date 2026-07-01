@@ -79,6 +79,12 @@ export default function TransaksiBaruPage() {
       return;
     }
 
+    if (statusPembayaran === "lunas" && !metodePembayaran) {
+      setError("Pilih metode pembayaran (Cash atau QRIS).");
+      setLoading(false);
+      return;
+    }
+
     const { error: insertError } = await supabase.from("transaksi").insert({
       pelanggan_id: pelangganId,
       paket_id: paketId,
@@ -168,16 +174,19 @@ export default function TransaksiBaruPage() {
             )}
           />
 
-          {statusPembayaran === "lunas" && (
-            <Select
-              label="Metode Pembayaran"
-              value={metodePembayaran}
-              onChange={(e) => setMetodePembayaran(e.target.value)}
-              options={Object.entries(metodePembayaranLabels).map(
-                ([value, label]) => ({ value, label })
-              )}
-            />
-          )}
+          <Select
+            label="Metode Pembayaran"
+            value={statusPembayaran === "lunas" ? metodePembayaran : ""}
+            onChange={(e) => setMetodePembayaran(e.target.value)}
+            disabled={statusPembayaran !== "lunas"}
+            options={
+              statusPembayaran === "lunas"
+                ? Object.entries(metodePembayaranLabels).map(
+                    ([value, label]) => ({ value, label })
+                  )
+                : [{ value: "", label: "Pilih status Lunas terlebih dahulu" }]
+            }
+          />
 
           {error && (
             <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950 dark:text-red-400">
