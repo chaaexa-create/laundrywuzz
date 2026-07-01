@@ -18,7 +18,7 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-xl border border-zinc-200/80 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900",
+        "rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900",
         className
       )}
     >
@@ -26,12 +26,12 @@ export function Card({
         <div className="mb-4 flex items-start justify-between gap-4">
           <div>
             {title && (
-              <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+              <h3 className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
                 {title}
               </h3>
             )}
             {description && (
-              <p className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="mt-0.5 text-xs text-slate-500 dark:text-zinc-400">
                 {description}
               </p>
             )}

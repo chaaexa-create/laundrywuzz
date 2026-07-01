@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { cn } from "@/lib/utils/cn";
 import { roleLabels } from "@/lib/utils/labels";
 import type { Profile } from "@/types/database";
@@ -51,15 +52,22 @@ export function Sidebar({ profile }: SidebarProps) {
 
   const NavContent = () => (
     <>
-      <div className="flex items-center gap-3 px-2 py-1">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
-          <Shirt className="h-5 w-5" />
+      <div className="flex items-center justify-between gap-2 px-2 py-1">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-900">
+            <Shirt className="h-5 w-5" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
+              Kasir Laundry
+            </p>
+            <p className="text-xs text-slate-500 dark:text-zinc-400">
+              Manajemen POS
+            </p>
+          </div>
         </div>
-        <div>
-          <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-            Kasir Laundry
-          </p>
-          <p className="text-xs text-zinc-500">Manajemen POS</p>
+        <div className="hidden lg:block">
+          <ThemeToggle />
         </div>
       </div>
 
@@ -76,8 +84,8 @@ export function Sidebar({ profile }: SidebarProps) {
               className={cn(
                 "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
                 active
-                  ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                  : "text-zinc-600 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
+                  ? "bg-slate-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-200"
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
@@ -87,16 +95,18 @@ export function Sidebar({ profile }: SidebarProps) {
         })}
       </nav>
 
-      <div className="mt-auto border-t border-zinc-200 pt-4 dark:border-zinc-800">
+      <div className="mt-auto border-t border-slate-200 pt-4 dark:border-zinc-800">
         <div className="mb-3 px-2">
-          <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+          <p className="text-sm font-medium text-slate-900 dark:text-zinc-100">
             {profile.full_name}
           </p>
-          <p className="text-xs text-zinc-500">{roleLabels[profile.role]}</p>
+          <p className="text-xs text-slate-500 dark:text-zinc-400">
+            {roleLabels[profile.role]}
+          </p>
         </div>
         <button
           onClick={handleLogout}
-          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-zinc-600 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-zinc-400 dark:hover:bg-red-950 dark:hover:text-red-400"
+          className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-red-50 hover:text-red-600 dark:text-zinc-400 dark:hover:bg-red-950 dark:hover:text-red-400"
         >
           <LogOut className="h-4 w-4" />
           Keluar
@@ -108,7 +118,7 @@ export function Sidebar({ profile }: SidebarProps) {
   return (
     <>
       <button
-        className="fixed left-4 top-4 z-40 flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-200 bg-white shadow-sm lg:hidden dark:border-zinc-800 dark:bg-zinc-900"
+        className="fixed left-4 top-4 z-40 flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 shadow-sm lg:hidden dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
         onClick={() => setMobileOpen(true)}
         aria-label="Buka menu"
       >
@@ -122,18 +132,21 @@ export function Sidebar({ profile }: SidebarProps) {
             onClick={() => setMobileOpen(false)}
           />
           <aside className="absolute left-0 top-0 flex h-full w-72 flex-col bg-white p-5 dark:bg-zinc-950">
-            <button
-              className="absolute right-4 top-4 text-zinc-500"
-              onClick={() => setMobileOpen(false)}
-            >
-              <X className="h-5 w-5" />
-            </button>
+            <div className="absolute right-4 top-4 flex items-center gap-2">
+              <ThemeToggle />
+              <button
+                className="text-slate-500 dark:text-zinc-400"
+                onClick={() => setMobileOpen(false)}
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
             <NavContent />
           </aside>
         </div>
       )}
 
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-zinc-200 bg-white p-5 lg:flex dark:border-zinc-800 dark:bg-zinc-950">
+      <aside className="hidden w-64 shrink-0 flex-col border-r border-slate-200 bg-white p-5 lg:flex dark:border-zinc-800 dark:bg-zinc-950">
         <NavContent />
       </aside>
     </>

@@ -122,8 +122,8 @@ export default function TransaksiPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/50">
-                <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
+              <tr className="border-b border-slate-200 bg-slate-50 dark:border-zinc-800 dark:bg-zinc-900/50">
+                <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
                   Nota
                 </th>
                 <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
@@ -166,10 +166,10 @@ export default function TransaksiPage() {
                 transaksi.map((item) => (
                   <tr
                     key={item.id}
-                    className="border-b border-zinc-100 dark:border-zinc-800"
+                    className="border-b border-slate-100 dark:border-zinc-800"
                   >
                     <td className="px-4 py-3">
-                      <p className="font-medium text-zinc-900 dark:text-zinc-100">
+                      <p className="font-medium text-slate-900 dark:text-zinc-100">
                         {item.nomor_nota}
                       </p>
                       <p className="text-xs text-zinc-500">
@@ -240,7 +240,7 @@ export default function TransaksiPage() {
                           )
                         }
                         className={cn(
-                          "min-w-[130px] rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs font-medium outline-none transition focus:border-zinc-400 focus:ring-2 focus:ring-zinc-200 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:focus:border-zinc-500 dark:focus:ring-zinc-800"
+                          "min-w-[130px] rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-800 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-500 dark:focus:ring-zinc-800"
                         )}
                       >
                         {statusOptions.map((opt) => (

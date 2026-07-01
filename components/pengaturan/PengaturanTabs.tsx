@@ -27,7 +27,7 @@ export function PengaturanTabs({
 
   return (
     <div>
-      <div className="mb-6 flex gap-1 rounded-xl border border-zinc-200 bg-zinc-100 p-1 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="mb-6 flex gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1 dark:border-zinc-800 dark:bg-zinc-900">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -35,8 +35,8 @@ export function PengaturanTabs({
             className={cn(
               "flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-colors",
               activeTab === tab.id
-                ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-zinc-100"
-                : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-200"
+                ? "bg-white text-slate-900 shadow-sm dark:bg-zinc-800 dark:text-zinc-100"
+                : "text-slate-600 hover:text-slate-900 dark:text-zinc-400 dark:hover:text-zinc-200"
             )}
           >
             {tab.label}

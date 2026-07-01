@@ -127,8 +127,8 @@ export default function PelangganPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/50">
-                <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
+              <tr className="border-b border-slate-200 bg-slate-50 dark:border-zinc-800 dark:bg-zinc-900/50">
+                <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
                   Nama
                 </th>
                 <th className="px-4 py-3 text-left font-medium text-zinc-600 dark:text-zinc-400">
@@ -162,7 +162,7 @@ export default function PelangganPage() {
                 filtered.map((p) => (
                   <tr
                     key={p.id}
-                    className="border-b border-zinc-100 dark:border-zinc-800"
+                    className="border-b border-slate-100 dark:border-zinc-800"
                   >
                     <td className="px-4 py-3 font-medium">{p.nama}</td>
                     <td className="px-4 py-3">{p.nomor_hp || "-"}</td>

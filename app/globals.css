@@ -1,8 +1,21 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #fafafa;
-  --foreground: #18181b;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --muted: #64748b;
+}
+
+.dark {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --card: #18181b;
+  --border: #27272a;
+  --muted: #a1a1aa;
 }
 
 @theme inline {
@@ -10,13 +23,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #09090b;
-    --foreground: #fafafa;
-  }
 }
 
 body {
@@ -27,11 +33,9 @@ body {
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: #d4d4d8 transparent;
+  scrollbar-color: #cbd5e1 transparent;
 }
 
-@media (prefers-color-scheme: dark) {
-  * {
-    scrollbar-color: #3f3f46 transparent;
-  }
+.dark * {
+  scrollbar-color: #3f3f46 transparent;
 }
