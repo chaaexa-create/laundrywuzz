@@ -48,7 +48,7 @@ export default function LoginPage() {
             <Shirt className="h-7 w-7" />
           </div>
           <h1 className="text-2xl font-semibold text-slate-900 dark:text-zinc-50">
-            Kasir Laundry
+            Laundry Wuzz
           </h1>
           <p className="mt-2 text-sm text-slate-500 dark:text-zinc-400">
             Masuk sebagai Admin atau Kasir

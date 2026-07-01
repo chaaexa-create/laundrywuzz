@@ -59,10 +59,7 @@ export function Sidebar({ profile }: SidebarProps) {
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
-              Kasir Laundry
-            </p>
-            <p className="text-xs text-slate-500 dark:text-zinc-400">
-              Manajemen POS
+              Laundry Wuzz
             </p>
           </div>
         </div>
