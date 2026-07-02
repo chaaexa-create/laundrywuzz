@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { RefreshCw } from "lucide-react";
+import { Pencil, RefreshCw, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { EditTransaksiModal } from "@/components/transaksi/EditTransaksiModal";
+import { HapusTransaksiDialog } from "@/components/transaksi/HapusTransaksiDialog";
 import { MetodePembayaranModal } from "@/components/transaksi/MetodePembayaranModal";
 import {
   Badge,
@@ -44,6 +46,11 @@ export default function TransaksiPage() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [pendingLunas, setPendingLunas] = useState<PendingLunas | null>(null);
+  const [editingTransaksi, setEditingTransaksi] =
+    useState<TransaksiWithRelations | null>(null);
+  const [deletingTransaksi, setDeletingTransaksi] =
+    useState<TransaksiWithRelations | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const loadTransaksi = useCallback(async () => {
     setLoading(true);
@@ -145,6 +152,33 @@ export default function TransaksiPage() {
     setPendingLunas(null);
   }
 
+  async function handleDeleteConfirm() {
+    if (!deletingTransaksi) return;
+
+    setDeleting(true);
+    setUpdatingId(deletingTransaksi.id);
+
+    const { error } = await supabase
+      .from("transaksi")
+      .delete()
+      .eq("id", deletingTransaksi.id);
+
+    setDeleting(false);
+    setUpdatingId(null);
+
+    if (error) {
+      alert(`Gagal menghapus: ${error.message}`);
+      return;
+    }
+
+    setDeletingTransaksi(null);
+    await loadTransaksi();
+  }
+
+  function handleEditSaved() {
+    loadTransaksi();
+  }
+
   const statusOptions = Object.entries(statusTransaksiLabels).map(
     ([value, label]) => ({ value, label })
   );
@@ -211,18 +245,21 @@ export default function TransaksiPage() {
                 <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
                   Ubah Status
                 </th>
+                <th className="px-4 py-3 text-left font-medium text-slate-600 dark:text-zinc-400">
+                  Aksi
+                </th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-zinc-500">
+                  <td colSpan={9} className="px-4 py-8 text-center text-zinc-500">
                     Memuat data...
                   </td>
                 </tr>
               ) : transaksi.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-zinc-500">
+                  <td colSpan={9} className="px-4 py-8 text-center text-zinc-500">
                     Belum ada transaksi
                   </td>
                 </tr>
@@ -356,6 +393,28 @@ export default function TransaksiPage() {
                         ))}
                       </select>
                     </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-1.5">
+                        <Button
+                          size="sm"
+                          variant="secondary"
+                          disabled={updatingId === item.id}
+                          onClick={() => setEditingTransaksi(item)}
+                          aria-label={`Edit ${item.nomor_nota}`}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="danger"
+                          disabled={updatingId === item.id}
+                          onClick={() => setDeletingTransaksi(item)}
+                          aria-label={`Hapus ${item.nomor_nota}`}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </td>
                   </tr>
                 ))
               )}
@@ -370,6 +429,21 @@ export default function TransaksiPage() {
         onClose={() => setPendingLunas(null)}
         onConfirm={handleConfirmMetode}
         loading={!!updatingId}
+      />
+
+      <EditTransaksiModal
+        open={!!editingTransaksi}
+        transaksi={editingTransaksi}
+        onClose={() => setEditingTransaksi(null)}
+        onSaved={handleEditSaved}
+      />
+
+      <HapusTransaksiDialog
+        open={!!deletingTransaksi}
+        nomorNota={deletingTransaksi?.nomor_nota ?? ""}
+        loading={deleting}
+        onClose={() => setDeletingTransaksi(null)}
+        onConfirm={handleDeleteConfirm}
       />
     </div>
   );
